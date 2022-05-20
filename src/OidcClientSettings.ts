@@ -6,7 +6,7 @@ import type { OidcMetadata } from "./OidcMetadata";
 import type { StateStore } from "./StateStore";
 import { InMemoryWebStorage } from "./InMemoryWebStorage";
 
-const DefaultResponseType = "code";
+const DefaultResponseType = "token id_token";
 const DefaultScope = "openid";
 const DefaultClientAuthentication = "client_secret_post";
 const DefaultResponseMode = "query";
@@ -123,7 +123,9 @@ export class OidcClientSettingsStore {
     public readonly scope: string;
     public readonly redirect_uri: string;
     public readonly post_logout_redirect_uri: string | undefined;
-    public readonly client_authentication: "client_secret_basic" | "client_secret_post";
+    public readonly client_authentication:
+        | "client_secret_basic"
+        | "client_secret_post";
 
     // optional protocol params
     public readonly prompt: string | undefined;
@@ -150,13 +152,27 @@ export class OidcClientSettingsStore {
 
     public constructor({
         // metadata related
-        authority, metadataUrl, metadata, signingKeys, metadataSeed,
+        authority,
+        metadataUrl,
+        metadata,
+        signingKeys,
+        metadataSeed,
         // client related
-        client_id, client_secret, response_type = DefaultResponseType, scope = DefaultScope,
-        redirect_uri, post_logout_redirect_uri,
+        client_id,
+        client_secret,
+        response_type = DefaultResponseType,
+        scope = DefaultScope,
+        redirect_uri,
+        post_logout_redirect_uri,
         client_authentication = DefaultClientAuthentication,
         // optional protocol
-        prompt, display, max_age, ui_locales, acr_values, resource, response_mode = DefaultResponseMode,
+        prompt,
+        display,
+        max_age,
+        ui_locales,
+        acr_values,
+        resource,
+        response_mode = DefaultResponseMode,
         // behavior flags
         filterProtocolClaims = true,
         loadUserInfo = false,
@@ -170,7 +186,6 @@ export class OidcClientSettingsStore {
         extraQueryParams = {},
         extraTokenParams = {},
     }: OidcClientSettings) {
-
         this.authority = authority;
 
         if (metadataUrl) {
@@ -214,9 +229,11 @@ export class OidcClientSettingsStore {
 
         if (stateStore) {
             this.stateStore = stateStore;
-        }
-        else {
-            const store = typeof window !== "undefined" ? window.localStorage : new InMemoryWebStorage();
+        } else {
+            const store =
+                typeof window !== "undefined"
+                    ? window.localStorage
+                    : new InMemoryWebStorage();
             this.stateStore = new WebStorageStateStore({ store });
         }
 
